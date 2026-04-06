@@ -1,0 +1,126 @@
+{
+    "audit_timestamp": "2026-04-06 20:38:11 UTC",
+    "total_findings": 11,
+    "resources": [
+        {
+            "resource_id": "user-002",
+            "resource_name": "Bob External",
+            "resource_type": "User",
+            "total_risk_score": 200,
+            "highest_severity": "HIGH",
+            "findings": [
+                {
+                    "issue": "MFA not registered",
+                    "severity": "HIGH",
+                    "risk_score": 75,
+                    "recommendation": "Enforce MFA via Conditional Access policy immediately"
+                },
+                {
+                    "issue": "Guest user with elevated role assignment",
+                    "severity": "HIGH",
+                    "risk_score": 80,
+                    "recommendation": "Review guest access \u2014 apply least privilege, restrict to Reader where possible"
+                },
+                {
+                    "issue": "No sign-in activity in 90+ days",
+                    "severity": "MEDIUM",
+                    "risk_score": 45,
+                    "recommendation": "Review and disable inactive account"
+                }
+            ]
+        },
+        {
+            "resource_id": "sp-002",
+            "resource_name": "LegacyIntegration",
+            "resource_type": "ServicePrincipal",
+            "total_risk_score": 165,
+            "highest_severity": "CRITICAL",
+            "findings": [
+                {
+                    "issue": "Service principal assigned Owner role",
+                    "severity": "CRITICAL",
+                    "risk_score": 95,
+                    "recommendation": "Reduce to least privilege \u2014 service principals should never hold Owner"
+                },
+                {
+                    "issue": "Service principal has expired secrets",
+                    "severity": "HIGH",
+                    "risk_score": 70,
+                    "recommendation": "Rotate secrets immediately and audit all dependent applications"
+                }
+            ]
+        },
+        {
+            "resource_id": "user-003",
+            "resource_name": "Carol Admin",
+            "resource_type": "User",
+            "total_risk_score": 140,
+            "highest_severity": "CRITICAL",
+            "findings": [
+                {
+                    "issue": "MFA not registered",
+                    "severity": "CRITICAL",
+                    "risk_score": 95,
+                    "recommendation": "Enforce MFA via Conditional Access policy immediately"
+                },
+                {
+                    "issue": "No sign-in activity in 90+ days",
+                    "severity": "MEDIUM",
+                    "risk_score": 45,
+                    "recommendation": "Review and disable inactive account"
+                }
+            ]
+        },
+        {
+            "resource_id": "user-004",
+            "resource_name": "Dave Stale",
+            "resource_type": "User",
+            "total_risk_score": 125,
+            "highest_severity": "HIGH",
+            "findings": [
+                {
+                    "issue": "MFA not registered",
+                    "severity": "HIGH",
+                    "risk_score": 75,
+                    "recommendation": "Enforce MFA via Conditional Access policy immediately"
+                },
+                {
+                    "issue": "User has never signed in",
+                    "severity": "MEDIUM",
+                    "risk_score": 50,
+                    "recommendation": "Disable or remove account \u2014 no sign-in activity detected"
+                }
+            ]
+        },
+        {
+            "resource_id": "ra-001",
+            "resource_name": "Carol Admin",
+            "resource_type": "RoleAssignment",
+            "total_risk_score": 100,
+            "highest_severity": "CRITICAL",
+            "findings": [
+                {
+                    "issue": "Privileged role 'Global Administrator' assigned at root scope",
+                    "severity": "CRITICAL",
+                    "risk_score": 100,
+                    "recommendation": "Scope role assignments to specific subscriptions or resource groups \u2014 never root"
+                }
+            ]
+        },
+        {
+            "resource_id": "ra-002",
+            "resource_name": "LegacyIntegration",
+            "resource_type": "RoleAssignment",
+            "total_risk_score": 100,
+            "highest_severity": "CRITICAL",
+            "findings": [
+                {
+                    "issue": "Privileged role 'Owner' assigned at root scope",
+                    "severity": "CRITICAL",
+                    "risk_score": 100,
+                    "recommendation": "Scope role assignments to specific subscriptions or resource groups \u2014 never root"
+                }
+            ]
+        }
+    ]
+}
