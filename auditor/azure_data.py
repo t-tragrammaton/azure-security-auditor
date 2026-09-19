@@ -1,16 +1,21 @@
-# azure_data.py
-# Real Azure SDK calls — replaces mock_data.py when credentials are configured.
-# Uses azure-identity and azure-mgmt libraries.
-
-from azure.identity import DefaultAzureCredential
-from azure.mgmt.authorization import AuthorizationManagementClient
-from msgraph import GraphServiceClient
+import os
 from datetime import datetime, timezone
 
-async def get_azure_users(tenant_id):
-    credential = DefaultAzureCredential()
-    graph_client = GraphServiceClient(credential)
+from azure.identity import ClientSecretCredential
+from azure.mgmt.authorization import AuthorizationManagementClient
+from msgraph import GraphServiceClient
 
+
+def _credential():
+    return ClientSecretCredential(
+        tenant_id=os.environ["AZURE_TENANT_ID"],
+        client_id=os.environ["AZURE_CLIENT_ID"],
+        client_secret=os.environ["AZURE_CLIENT_SECRET"]
+    )
+
+
+async def get_azure_users(tenant_id):
+    graph_client = GraphServiceClient(_credential())
     users_response = await graph_client.users.get()
     users = []
 
@@ -42,14 +47,12 @@ async def get_azure_users(tenant_id):
 
 
 async def get_azure_service_principals(tenant_id):
-    credential = DefaultAzureCredential()
-    graph_client = GraphServiceClient(credential)
-
+    graph_client = GraphServiceClient(_credential())
     sp_response = await graph_client.service_principals.get()
     service_principals = []
 
     for sp in sp_response.value:
-        credentials = await graph_client.service_principals.by_service_principal_id(sp.id).password_credentials.get()
+        credentials = sp.password_credentials or []
         now = datetime.now(timezone.utc)
         has_expired = any(c.end_date_time < now for c in credentials if c.end_date_time)
         expiring_soon = any(
@@ -62,7 +65,7 @@ async def get_azure_service_principals(tenant_id):
             "displayName": sp.display_name,
             "appId": sp.app_id,
             "accountEnabled": sp.account_enabled,
-            "createdDateTime": sp.created_date_time,
+            "createdDateTime": None,
             "assignedRoles": [],
             "secretsExpiringSoon": expiring_soon,
             "hasExpiredSecrets": has_expired
@@ -72,7 +75,7 @@ async def get_azure_service_principals(tenant_id):
 
 
 async def get_azure_role_assignments(subscription_id):
-    credential = DefaultAzureCredential()
+    credential = _credential()
     auth_client = AuthorizationManagementClient(credential, subscription_id)
 
     assignments = []
